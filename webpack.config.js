@@ -23,12 +23,20 @@ module.exports = (env, argv) => {
       app: `${__dirname}/src/index.js`,
     },
     output: {
-      filename: "[name][contenthash].js",
+      filename: "[name][hash:8].js",
+      path:path.resolve(__dirname,"dist"),
+      publicPath:"/",
+      chunkFilename:'js/[name][contenthash:8].js',
+      library:"[name]",
     },
     devServer: {
-      // port: "3001",
-      // compress: true,
-      // open: true,
+      contentBase:path.resolve(__dirname,"/dist"),
+      port: "3001",
+      compress: true,
+      open: true,
+      hot:true,
+      clientLogLevel:'none',
+      quiet:true,
     },
     module: {
       rules: [
@@ -62,7 +70,7 @@ module.exports = (env, argv) => {
                 // 图片低于8k 回转换成base64
                 //优点:是减少请求次数, 缺点:文件变大   常见设置大小8kb
                 limit: 8 * 1024,
-                name: "/img/[name][contenthash:8].[ext]",
+                name: "img/[name][contenthash:8].[ext]",
               },
             },
           ],

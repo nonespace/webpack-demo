@@ -7,7 +7,8 @@ export default class Layout extends React.PureComponent {
     const { children } = this.props;
     return (
       <div>
-        <Button type="primary">测试代码</Button>
+        <Button type="primary" onClick={()=>{
+        }}>测试代码</Button>
         {children}
       </div>
     );
