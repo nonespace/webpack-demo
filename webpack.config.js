@@ -3,9 +3,20 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const optimizeCssAssetsWebpackPlugin = require("optimize-css-assets-webpack-plugin");
-const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin');
-const webpack  = require("webpack")
+const AddAssetHtmlPlugin = require("add-asset-html-webpack-plugin");
+const webpack = require("webpack");
 module.exports = (env, argv) => {
+  const dllBuild =
+    argv.mode == "production"
+      ? [
+          new webpack.DllReferencePlugin({
+            manifest: path.resolve(__dirname, "dll/manifest.json"),
+          }),
+          new AddAssetHtmlPlugin({
+            filepath: path.resolve(__dirname, "dll/react.js"),
+          }),
+        ]
+      : [];
   return {
     mode: argv.mode,
     entry: {
@@ -15,16 +26,16 @@ module.exports = (env, argv) => {
       filename: "[name][contenthash].js",
     },
     devServer: {
-      port: "3000",
-      compress: true,
-      open: true,
+      // port: "3001",
+      // compress: true,
+      // open: true,
     },
     module: {
       rules: [
         {
           test: /\.js|jsx$/,
           include: [path.resolve(__dirname, "src")],
-          exclude:/node-module/,
+          exclude: /node-module/,
           use: [
             {
               loader: "babel-loader",
@@ -95,12 +106,7 @@ module.exports = (env, argv) => {
       new CleanWebpackPlugin({ removeFiles: ["dist"] }),
       new optimizeCssAssetsWebpackPlugin(),
       //告诉webpack 那些库不参与打包
-      new webpack.DllReferencePlugin({
-        manifest:path.resolve(__dirname,"dll/manifest.json")
-      }),
-      new AddAssetHtmlPlugin({
-        filepath: path.resolve(__dirname,"dll/dll.js")
-      })
+      ...dllBuild
     ],
     optimization: {
       splitChunks: {
